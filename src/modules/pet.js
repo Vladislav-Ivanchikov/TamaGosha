@@ -51,7 +51,7 @@ export class Pet {
     this.lastPlayCount++;
     this.energy -= energyCost;
     if (this.lastPlayCount > 1) {
-      this.hunger = Math.max(0, this.hunger + 5);
+      this.hunger = Math.max(0, this.hunger + 3);
     }
     this.happiness = Math.min(100, this.happiness + 10);
     this.coins += 5;
