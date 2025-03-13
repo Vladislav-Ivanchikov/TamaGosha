@@ -9,7 +9,7 @@ export class Pet {
     this.lastVisit = new Date();
     this.lastPlayCount = 0;
     this.isAlive = true;
-    this.state = "happy"; //  "hungry", "ill", "happy"
+    this.state = { class: "happy" }; //  "hungry", "ill", "happy"
     this.logInfo = [];
   }
 
@@ -25,7 +25,7 @@ export class Pet {
   }
 
   feed() {
-    if (this.hunger < 20 || !this.isAlive) {
+    if (this.hunger < 20) {
       alert("Питомец не голоден");
       return;
     }
@@ -39,18 +39,18 @@ export class Pet {
   }
 
   play() {
-    if (this.hunger < 10 || this.energy < 10 || !this.isAlive) {
+    if (this.hunger < 10 || this.energy < 10) {
       alert("Питомец устал или голоден, отдохните или покормите его");
       return;
     }
-    const energyCost = this.lastPlayCount > 1 ? 15 : 10;
+    const energyCost = this.lastPlayCount > 2 ? 15 : 10;
     if (this.energy < energyCost) {
       alert("Недостаточно энергии");
       return;
     }
     this.lastPlayCount++;
     this.energy -= energyCost;
-    if (this.lastPlayCount > 1) {
+    if (this.lastPlayCount > 2) {
       this.hunger = Math.max(0, this.hunger + 3);
     }
     this.happiness = Math.min(100, this.happiness + 10);
@@ -63,7 +63,7 @@ export class Pet {
     this.checkIsAlive();
   }
 
-  heal(type = "weak") {
+  heal(type) {
     const heal = heals[type];
     if (this.coins < heal.cost) {
       alert("Недостаточно монет");
@@ -78,11 +78,11 @@ export class Pet {
   }
 
   event() {
-    if (this.hunger < 10 || this.energy < 5 || !this.isAlive) {
+    if (this.hunger < 10 || this.energy < 5) {
       alert("Питомец устал или голоден, отдохните или покормите его");
       return;
     }
-    const event = events[Math.floor(Math.random() * events.length)];
+    const event = this.getRandomEvent();
     this.energy -= 10;
     if (event.happiness)
       this.happiness = Math.min(100, this.happiness + event.happiness);
@@ -92,6 +92,20 @@ export class Pet {
     alert(event.desc);
     this.addLog(event.desc);
     this.checkIsAlive();
+  }
+
+  getRandomEvent() {
+    let eventType;
+    const chance = Math.random();
+    if (chance < 0.05) eventType = "extra";
+    else if (chance < 0.35) eventType = "rare";
+    else eventType = "common";
+    const filteredEvents = events.filter((item) => item.type === eventType);
+    if (filteredEvents.length === 0) {
+      console.error(`Нет событий типа "${eventType}"`);
+      return null;
+    }
+    return filteredEvents[Math.floor(Math.random() * filteredEvents.length)];
   }
 
   checkIsAlive() {
@@ -136,21 +150,66 @@ const foods = [
   { name: "Вчерашний суп", hunger: -15, happiness: -5 },
 ];
 
-const events = [
-  { desc: "Питомец нашел клад!", happiness: 20, coins: 10 }, // Положительное
-  { desc: "Питомец устал", energy: -30 }, // Отрицательное
-  { desc: "Питомец выспался", energy: 50 }, // Положительное редкое
-  { desc: "Дождливый день", happiness: -10 }, // Отрицательное
-  { desc: "Питомец нашел нового друга", happiness: 10 }, // Положительное
-  { desc: "Питомец нашел новую игру", happiness: 5 }, // Положительное
-  { desc: "Питомец заболел", health: -20 }, // Отрицательное
-  { desc: "Питомец нашел монету", coins: 5 }, // Положительное
-  { desc: "Питомец порвал игрушку", happiness: -5 }, // Отрицательное
-  { desc: "Жаркий день", happiness: -10 }, // Отрицательное
-];
-
 const heals = {
   weak: { health: 10, cost: 10 },
   medium: { health: 20, cost: 20 },
   strong: { health: 30, cost: 30, energy: 10 },
 };
+
+const events = [
+  { desc: "Питомец нашел клад!", type: "extra", happiness: 20, coins: 25 }, // Положительное
+  { desc: "Питомец устал", type: "rare", energy: -30 }, // Отрицательное
+  { desc: "Питомец выспался", type: "extra", energy: 40 }, // Положительное
+  { desc: "Дождливый день", type: "rare", happiness: -20 }, // Отрицательное
+  { desc: "Питомец нашел нового друга", type: "rare", happiness: 10 }, // Положительное
+  { desc: "Питомец нашел новую игру", type: "common", happiness: 8 }, // Положительное
+  { desc: "Питомец заболел", type: "rare", health: -20 }, // Отрицательное
+  { desc: "Питомец нашел монету", type: "common", coins: 5 }, // Положительное
+  { desc: "Питомец порвал игрушку", type: "common", happiness: -8 }, // Отрицательное
+  { desc: "Жаркий день", type: "common", happiness: -10, energy: -10 }, // Отрицательное
+  { desc: "Питомец нашел вкусняшку", type: "common", hunger: -8 }, // Положительное
+  { desc: "Питомец поиграл с бабочкой", type: "common", happiness: 5 }, // Положительное
+  { desc: "Питомец получил похвалу", type: "common", happiness: 5 }, // Положительное
+  { desc: "Питомец нашел удобное место для сна", type: "common", energy: 10 }, // Положительное
+  {
+    desc: "Питомец научился новому трюку",
+    type: "common",
+    happiness: 5,
+    coins: 2,
+  }, // Положительное
+  { desc: "Питомец получил массаж", type: "common", health: 5 }, // Положительное
+  { desc: "Питомец нашел старую игрушку", type: "common", happiness: 3 }, // Положительное
+  { desc: "Питомец уронил еду", type: "common", hunger: 10 }, // Отрицательное
+  { desc: "Питомец заскучал", type: "common", happiness: -5 }, // Отрицательное
+  { desc: "Питомец поцарапался", type: "common", health: -5 }, // Отрицательное
+  { desc: "Питомец устал от шума", type: "common", energy: -10 }, // Отрицательное
+  { desc: "Питомец потерял монету", type: "common", coins: -2 }, // Отрицательное
+  { desc: "Питомец съел что-то не то", type: "common", health: -8, hunger: -8 }, // Отрицательное
+  {
+    desc: "Питомец застрял в кустах",
+    type: "common",
+    happiness: -5,
+    energy: -5,
+  }, // Отрицательное
+  { desc: "Питомец выиграл в лотерею", type: "rare", coins: 20, happiness: 10 }, // Положительное
+  {
+    desc: "Питомец получил супер-лакомство",
+    type: "rare",
+    hunger: -20,
+    happiness: 10,
+  }, // Положительное
+  { desc: "Питомец попал под дождь", type: "rare", health: -5, happiness: -10 }, // Отрицательное
+  {
+    desc: "Питомец подрался с другим питомцем",
+    type: "rare",
+    health: -15,
+    happiness: -10,
+  }, // Отрицательное
+  {
+    desc: "Питомец стал звездой дня",
+    type: "extra",
+    happiness: 30,
+    coins: 50,
+    energy: 20,
+  }, // Положительное
+];

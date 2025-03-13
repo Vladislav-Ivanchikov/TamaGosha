@@ -1,5 +1,5 @@
 import { Pet } from "./modules/pet.js";
-import { updateDisplay } from "./modules/updateUI.js";
+import { updatePet } from "./modules/updateUI.js";
 import {
   loadData,
   loadPetName,
@@ -34,20 +34,20 @@ if (!pet) {
   }
 }
 
-updateDisplay(pet);
+updatePet(pet);
 document.getElementById("petName").textContent =
   pet.name[0].toUpperCase() + pet.name.slice(1);
 
 document.getElementById("feedBtn").addEventListener("click", () => {
   pet.feed();
   saveData(pet);
-  updateDisplay(pet);
+  updatePet(pet);
 });
 
 document.getElementById("playBtn").addEventListener("click", () => {
   pet.play();
   saveData(pet);
-  updateDisplay(pet);
+  updatePet(pet);
 });
 
 document.getElementById("healBtn").addEventListener("click", () => {
@@ -58,13 +58,13 @@ document.getElementById("healBtn").addEventListener("click", () => {
   }
   pet.heal(type);
   saveData(pet);
-  updateDisplay(pet);
+  updatePet(pet);
 });
 
 document.getElementById("eventBtn").addEventListener("click", () => {
   pet.event();
   saveData(pet);
-  updateDisplay(pet);
+  updatePet(pet);
 });
 
 document.getElementById("logBtn").addEventListener("click", () => {
@@ -104,7 +104,7 @@ setInterval(() => {
     return;
   } else {
     pet.update();
-    updateDisplay(pet);
+    updatePet(pet);
     saveData(pet);
   }
 }, 2000);

@@ -1,6 +1,10 @@
 /* Импорт шрифта из Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap");
 
+* {
+  box-sizing: border-box;
+}
+
 /* Основные стили для страницы */
 body {
   font-family: "Comic Neue", cursive;
@@ -39,6 +43,57 @@ body {
   flex-direction: column;
   padding: 20px;
   position: relative;
+}
+
+#myPet.hungry {
+  animation: hungry 2s infinite alternate; /* Анимация голода */
+  background-color: #e6e930; /* желтый цвет для голода */
+  transition: background-color 2s; /* Плавное изменение цвета */
+}
+
+@keyframes hungry {
+  0% {
+    background-color: #e6e930;
+  }
+  50% {
+    background-color: #f3b632; /* Оранжевый цвет для голода */
+  }
+  100% {
+    background-color: #f3b632; /* Красный цвет для голода */
+  }
+}
+
+#myPet.happy {
+  animation: happy 2s infinite alternate; /* Анимация счастья */
+  background-color: #4caf50; /* Зеленый цвет для счастья */
+  transition: background-color 2s; /* Плавное изменение цвета */
+}
+
+@keyframes happy {
+  0% {
+    background-color: #4ed152;
+  }
+  50% {
+    background-color: #2ef35f; /* Желтый цвет для счастья */
+  }
+  100% {
+    background-color: #11e646; /* Желтый цвет для счастья */
+  }
+}
+
+#myPet.sick {
+  animation: sick 0.5s infinite alternate; /* Анимация болезни */
+  background-color: #e91e63; /* Розовый цвет для болезни */
+  transition: background-color 2s; /* Плавное изменение цвета */
+}
+
+@keyframes sick {
+  0% {
+    background-color: #f0071b;
+  }
+  100% {
+    background-color: #c20d0d; /* Красный цвет для болезни */
+  }
 }
 
 #petName {
@@ -133,6 +188,23 @@ button:disabled {
 }
 
 /* Иконки для кнопок */
+
+#feedBtn.warning {
+  border: 2px solid #ff9800; /* Оранжевая рамка для кнопки */
+  animation: border-warning 2s infinite alternate; /* Анимация рамки */
+}
+
+@keyframes border-warning {
+  0% {
+    border-color: #ff9800;
+    background-color: #4caf50;
+  }
+  100% {
+    border-color: #f44336; /* Красная рамка для кнопки */
+    background-color: #f4b836;
+  }
+}
+
 #feedBtn::before {
   content: "🍔";
   margin-right: 5px;
@@ -143,9 +215,19 @@ button:disabled {
   margin-right: 5px;
 }
 
+#playBtn.warning {
+  border: 2px solid #ff9800;
+  animation: border-warning 2s infinite alternate;
+}
+
 #healBtn::before {
   content: "💊";
   margin-right: 5px;
+}
+
+#healBtn.warning {
+  border: 2px solid #ff9800;
+  animation: border-warning 2s infinite alternate;
 }
 
 #eventBtn::before {

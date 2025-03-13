@@ -4,21 +4,50 @@ const petName = document.getElementById("petName");
 const feedBtn = document.getElementById("feedBtn");
 const playBtn = document.getElementById("playBtn");
 const healBtn = document.getElementById("healBtn");
-const iventBtn = document.getElementById("iventBtn");
+const eventBtn = document.getElementById("eventBtn");
 const hungerBar = document.getElementById("hungerBar");
 const happinessBar = document.getElementById("happinessBar");
 const healthBar = document.getElementById("healthBar");
 const energyBar = document.getElementById("energyBar");
 
-export function updateDisplay(pet) {
+const petBars = [hungerBar, happinessBar, healthBar, energyBar];
+const petButtons = [feedBtn, playBtn, healBtn, eventBtn];
+
+const petStates = {
+  die: { src: "../petImg/die.jpg", bgColor: "transparent", class: "" },
+  hungry: {
+    src: "../petImg/hungry1.jpg",
+    bgColor: "",
+    class: "hungry",
+    textColor: "black",
+  },
+  sick: {
+    src: "../petImg/ill1.jpg",
+    bgColor: "",
+    class: "sick",
+    textColor: "black",
+  },
+  happy: {
+    src: "../petImg/happy1.jpg",
+    bgColor: "",
+    class: "happy",
+    textColor: "white",
+  },
+};
+
+export function updatePet(pet) {
+  updatePetBars(pet);
+  updatePetImg(pet);
+  updateWarningButtons(pet);
+}
+
+export function updatePetBars(pet) {
   if (!pet.isAlive) {
-    feedBtn.disabled = true;
-    playBtn.disabled = true;
-    healBtn.disabled = true;
-    iventBtn.disabled = true;
-    hungerBar.value = "0";
-    happinessBar.value = "0";
-    healthBar.value = "0";
+    petButtons.forEach((btn) => {
+      btn.classList.remove("warning");
+      btn.disabled = true;
+    });
+    petBars.forEach((bar) => (bar.value = "0"));
   } else {
     hungerBar.value = pet.hunger;
     happinessBar.value = pet.happiness;
@@ -26,24 +55,36 @@ export function updateDisplay(pet) {
     energyBar.value = pet.energy;
     document.getElementById("coinInfo").textContent = pet.coins;
   }
-  updatePetImg(pet);
 }
 
 function updatePetImg(pet) {
   if (pet.hunger === 100 || pet.happiness === 0 || pet.health === 0) {
-    petImg.src = "../petImg/die.jpg";
-    myPetWrapper.style.backgroundColor = "transparent";
+    pet.state = petStates.die;
   } else if (pet.hunger > 70 && pet.health > 20) {
-    petImg.src = "../petImg/hungry1.jpg";
-    myPetWrapper.style.backgroundColor = "yellow";
-    petName.style.color = "black";
+    pet.state = petStates.hungry;
   } else if (pet.health < 20) {
-    petImg.src = "../petImg/ill1.jpg";
-    myPetWrapper.style.backgroundColor = "red";
-    petName.style.color = "black";
+    pet.state = petStates.sick;
   } else {
-    petImg.src = "../petImg/happy1.jpg";
-    myPetWrapper.style.backgroundColor = "green";
-    petName.style.color = "white";
+    pet.state = petStates.happy;
   }
+
+  petImg.src = pet.state.src;
+  myPetWrapper.style.backgroundColor = pet.state.bgColor;
+  myPetWrapper.className = pet.state.class;
+  petName.style.color = pet.state.textColor || "black";
+}
+
+function updateWarningButtons(pet) {
+  pet.state.class === "hungry"
+    ? feedBtn.classList.add("warning")
+    : feedBtn.classList.remove("warning");
+  pet.state.class === "sick"
+    ? healBtn.classList.add("warning")
+    : healBtn.classList.remove("warning");
+  pet.state.class === "happy"
+    ? eventBtn.classList.add("warning")
+    : eventBtn.classList.remove("warning");
+  pet.happiness < 20
+    ? playBtn.classList.add("warning")
+    : playBtn.classList.remove("warning");
 }
