@@ -1,8 +1,23 @@
 import { Pet } from "./pet.js";
 
-export function saveData(pet) {
+export function getUserID() {
+  let id = localStorage.getItem("userID");
+  if (!id) {
+    id = "user_" + Math.random().toString(36).substring(2, 11);
+    localStorage.setItem("userID", id);
+  }
+  return id;
+}
+
+export async function saveData(pet, userID) {
   try {
-    localStorage.setItem(pet.name, JSON.stringify(pet));
+    await fetch(`/api/pet/${userID}/${pet.name}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(pet),
+    });
   } catch (e) {
     console.error("Error saving data:", e);
   }
@@ -16,15 +31,17 @@ export function savePetName(petName) {
   }
 }
 
-export function loadData(petName) {
+export async function loadData(petName, userID) {
   try {
-    const data = localStorage.getItem(petName);
-    if (!data) {
+    const res = await fetch(`/api/pet/${userID}/${petName}`);
+    const data = await res.json();
+    if (!data || data.error) {
+      console.error("Error loading data:", data.error);
       return null;
     }
-    const savedData = JSON.parse(data);
-    const pet = new Pet(savedData.name);
-    Object.assign(pet, savedData);
+    console.log("Data loaded:", data);
+    const pet = new Pet(data.name);
+    Object.assign(pet, data);
     return pet;
   } catch (e) {
     console.error("Error loading data:", e);
