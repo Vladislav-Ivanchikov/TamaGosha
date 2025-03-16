@@ -20,11 +20,11 @@ async function connectToDB() {
 
 connectToDB();
 
-app.get("/:userID/:petName", (req, res) => {
+app.get("/:userID/:petName", async (req, res) => {
   const { petName, userID } = req.params;
   try {
     const collection = db.collection("pets");
-    const pet = collection.findOne(userID, petName);
+    const pet = await collection.findOne(userID, petName);
     res.json(pet || { error: "Pet not found" });
   } catch (e) {
     console.error("Error getting pet:", e);
@@ -32,12 +32,12 @@ app.get("/:userID/:petName", (req, res) => {
   }
 });
 
-app.post("/:userID/:petName", (req, res) => {
+app.post("/:userID/:petName", async (req, res) => {
   const { petName, userID } = req.params;
   try {
     const collection = db.collection("pets");
     const petData = { userID, petName, ...req.body };
-    collection.updateOne(
+    await collection.updateOne(
       { userID, petName },
       { $set: petData },
       { upsert: true }
