@@ -1,8 +1,7 @@
 const express = require("express");
+const { MongoClient } = require("mongodb");
 const app = express();
 app.use(express.json());
-
-let pets = {};
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
