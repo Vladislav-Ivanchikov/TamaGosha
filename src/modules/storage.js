@@ -11,7 +11,7 @@ export function getUserID() {
 
 export async function saveData(userID, pet) {
   try {
-    const responce = await fetch(`/pet/${userID}/${pet.name}`, {
+    const responce = await fetch(`/api/pet/${userID}/${pet.name}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export function savePetName(petName) {
 
 export async function loadData(userID, petName) {
   try {
-    const res = await fetch(`/pet/${userID}/${petName}`);
+    const res = await fetch(`/api/pet/${userID}/${petName}`);
     const data = await res.json();
     if (!data || data.error) {
       console.error("Error loading data:", data.error);
