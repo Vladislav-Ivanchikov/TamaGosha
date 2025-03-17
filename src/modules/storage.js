@@ -9,15 +9,21 @@ export function getUserID() {
   return id;
 }
 
-export async function saveData(pet, userID) {
+export async function saveData(userID, pet) {
   try {
-    await fetch(`/api/pet/${userID}/${pet.name}`, {
+    const responce = await fetch(`/api/pet/${userID}/${pet.name}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(pet),
     });
+    console.log("Ответ сервера:", responce.status);
+    if (!responce.ok) {
+      throw new Error(
+        `Ошибка сервера: ${responce.status} ${responce.statusText}`
+      );
+    }
   } catch (e) {
     console.error("Error saving data:", e);
   }
@@ -31,7 +37,7 @@ export function savePetName(petName) {
   }
 }
 
-export async function loadData(petName, userID) {
+export async function loadData(userID, petName) {
   try {
     const res = await fetch(`/api/pet/${userID}/${petName}`);
     const data = await res.json();

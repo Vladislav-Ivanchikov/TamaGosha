@@ -14,7 +14,7 @@ const lastPetName = loadPetName();
 
 (async () => {
   if (lastPetName) {
-    pet = await loadData(lastPetName);
+    pet = await loadData(userID, lastPetName);
     if (pet) {
       console.log("Питомец загружен:", pet.name);
     } else {
@@ -34,7 +34,7 @@ const lastPetName = loadPetName();
       console.log("Создан новый питомец:", petName);
       pet = new Pet(petName);
       savePetName(pet.name);
-      await saveData(pet, userID);
+      await saveData(userID, pet);
     }
   }
 
@@ -44,13 +44,13 @@ const lastPetName = loadPetName();
 
   document.getElementById("feedBtn").addEventListener("click", async () => {
     pet.feed();
-    await saveData(pet, userID);
+    await saveData(userID, pet);
     updatePet(pet);
   });
 
   document.getElementById("playBtn").addEventListener("click", async () => {
     pet.play();
-    await saveData(pet, userID);
+    await saveData(userID, pet);
     updatePet(pet);
   });
 
@@ -61,13 +61,13 @@ const lastPetName = loadPetName();
       return;
     }
     pet.heal(type);
-    await saveData(pet, userID);
+    await saveData(userID, pet);
     updatePet(pet);
   });
 
   document.getElementById("eventBtn").addEventListener("click", async () => {
     pet.event();
-    await saveData(pet, userID);
+    await saveData(userID, pet);
     updatePet(pet);
   });
 
@@ -89,6 +89,7 @@ const lastPetName = loadPetName();
     logContent.appendChild(logTitle);
     const logList = document.createElement("ul");
     for (let i = pet.logInfo.length - 1; i >= pet.logInfo.length - 5; i--) {
+      // Ошибка, если меньше 5 событий
       // Вывод 5 последних событий
       const logItem = document.createElement("li");
       logItem.textContent = pet.logInfo[i].desc;
@@ -109,7 +110,7 @@ const lastPetName = loadPetName();
     } else {
       pet.update();
       updatePet(pet);
-      await saveData(pet, userID);
+      await saveData(userID, pet);
     }
   }, 2000);
 })();
