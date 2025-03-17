@@ -28,7 +28,7 @@ async function connectToDB() {
 
 connectToDB().catch((e) => console.error("Error connecting to DB:", e));
 
-app.get("/api/pet/:userID/:petName", async (req, res) => {
+app.get("/pet/:userID/:petName", async (req, res) => {
   const { petName, userID } = req.params;
   try {
     if (!db) {
@@ -43,7 +43,7 @@ app.get("/api/pet/:userID/:petName", async (req, res) => {
   }
 });
 
-app.post("/api/pet/:userID/:petName", async (req, res) => {
+app.post("/pet/:userID/:petName", async (req, res) => {
   const { petName, userID } = req.params;
   try {
     if (!db) {
