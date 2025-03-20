@@ -22,29 +22,27 @@ body {
   height: 100vh;
 }
 
-/* Основной контейнер приложения */
+/* Контейнер приложения */
 #app {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh; /* Высота экрана */
-  overflow: hidden; /* Убираем прокрутки */
-  box-sizing: border-box;
-  padding: 10px; /* Отступы для контента */
+  display: grid;
+  grid-template-rows: 2fr 2fr 1fr; /* Разделение на 3 части */
+  margin: 0 auto;
+  max-width: 400px;
+  height: 98vh;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Тень */
+  overflow: hidden;
 }
 
-/* Контейнер питомца */
+/* Блок с питомцем */
 #myPet {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  max-width: 100%;
-  max-height: 50%; /* Ограничиваем высоту питомца */
-  overflow: hidden;
-  text-align: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  position: relative;
 }
 
 #myPet.hungry {
@@ -105,11 +103,9 @@ body {
   margin-bottom: 10px;
 }
 
-/* Изображение питомца */
 #petImage {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain; /* Сохраняем пропорции изображения */
+  width: 200px;
+  height: 200px;
   border-radius: 50%; /* Круглое изображение */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   animation: breathe 2s infinite alternate; /* Анимация дыхания */
@@ -125,28 +121,17 @@ body {
   }
 }
 
-/* Статус питомца */
+/* Панель состояния */
 #petStatus {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  margin-top: 10px;
+  padding: 20px;
 }
 
-#petStatus p {
-  margin: 5px 0;
-  font-size: 14px;
-  text-align: center;
-}
-
-/* Прогресс-бары */
 progress {
-  width: 100%;
-  max-width: 300px;
-  height: 10px;
-  border-radius: 5px;
+  width: 90%;
+  height: 20px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -165,22 +150,13 @@ progress[value]::-webkit-progress-value {
   border-radius: 10px;
 }
 
-/* Кнопки управления */
+/* Блок с кнопками */
 #buttons {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  width: 100%;
-}
-
-#buttons button {
-  flex: 1 1 calc(33.33% - 10px); /* Кнопки занимают равное пространство */
-  max-width: 120px;
-  padding: 10px;
-  font-size: 14px;
-  border-radius: 5px;
-  box-sizing: border-box;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
 }
 
 button {
@@ -296,24 +272,20 @@ button:disabled {
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto; /* Прокрутка только для модального окна */
+  overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
 }
 
 .log-modal-content {
   background-color: #fefefe;
-  margin: 10% auto;
+  margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 90%;
-  max-width: 400px;
+  width: 80%;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  max-height: 80%; /* Ограничиваем высоту модального окна */
-  overflow-y: auto; /* Вертикальная прокрутка для длинного контента */
 }
 
-/* Кнопка закрытия модального окна */
 .log-modal .close {
   color: #aaa;
   float: right;
@@ -331,20 +303,17 @@ button:disabled {
 /* Адаптивность для мобильных устройств */
 @media (max-width: 400px) {
   #app {
-    padding: 5px; /* Уменьшаем отступы */
+    max-width: 100%;
+    height: 100vh;
   }
 
-  #buttons button {
-    flex: 1 1 calc(50% - 10px); /* Кнопки занимают больше места на маленьких экранах */
-    font-size: 12px;
-    padding: 8px;
+  #petImage {
+    width: 150px;
+    height: 150px;
   }
 
-  #petStatus p {
-    font-size: 12px;
-  }
-
-  progress {
-    max-width: 100%; /* Прогресс-бары занимают всю ширину */
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
   }
 }
