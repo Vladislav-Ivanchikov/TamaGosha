@@ -72,34 +72,17 @@ const lastPetName = loadPetName();
   });
 
   document.getElementById("logBtn").addEventListener("click", () => {
-    const fragment = document.createDocumentFragment();
-    const logDiv = document.createElement("div");
-    logDiv.classList.add("log-modal");
-    const logContent = document.createElement("div");
-    logContent.classList.add("log-modal-content");
-    const closeBtn = document.createElement("span");
-    closeBtn.classList.add("close");
-    closeBtn.innerHTML = "&times;";
-    closeBtn.onclick = function () {
-      logDiv.style.display = "none";
-    };
-    logContent.appendChild(closeBtn);
-    const logTitle = document.createElement("h2");
-    logTitle.textContent = "История событий";
-    logContent.appendChild(logTitle);
     const logList = document.createElement("ul");
-    for (let i = pet.logInfo.length - 1; i >= pet.logInfo.length - 5; i--) {
-      // Ошибка, если меньше 5 событий
-      // Вывод 5 последних событий
+    for (
+      let i = pet.logInfo.length - 1;
+      i >= Math.max(0, pet.logInfo.length - 5);
+      i--
+    ) {
       const logItem = document.createElement("li");
       logItem.textContent = pet.logInfo[i].desc;
       logList.appendChild(logItem);
     }
-    logContent.appendChild(logList);
-    logDiv.appendChild(logContent);
-    fragment.appendChild(logDiv);
-    document.body.appendChild(fragment);
-    logDiv.style.display = "block";
+    createModal("Логи", logList);
   });
 
   setInterval(async () => {
