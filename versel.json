@@ -1,5 +1,10 @@
 {
-  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    }
+  ],
   "builds": [
     {
       "src": "api/**/*.js",
@@ -8,16 +13,6 @@
     {
       "src": "dist/**/*",
       "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/index.html"
     }
   ]
 }
