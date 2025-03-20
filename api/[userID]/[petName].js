@@ -1,9 +1,9 @@
-import express, { json } from "express";
+// import express, { json } from "express";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
-const app = express();
-app.use(json());
+// const app = express();
+// app.use(json());
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
@@ -23,7 +23,7 @@ async function connectToDB() {
   return db;
 }
 
-export async function handleRequest(req, res) {
+export default async function handler(req, res) {
   const { petName, userID } = req.query;
   try {
     await connectToDB();
@@ -92,4 +92,4 @@ export async function handleRequest(req, res) {
 //   }
 // });
 
-export default app;
+// export default app;
