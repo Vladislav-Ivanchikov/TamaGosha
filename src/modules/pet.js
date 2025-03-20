@@ -25,7 +25,7 @@ export class Pet {
   }
 
   feed() {
-    if (this.hunger < 20) {
+    if (this.hunger < 15) {
       alert("Питомец не голоден");
       return;
     }
@@ -39,7 +39,7 @@ export class Pet {
   }
 
   play() {
-    if (this.hunger < 10 || this.energy < 10) {
+    if (this.hunger > 90 || this.energy < 10) {
       alert("Питомец устал или голоден, отдохните или покормите его");
       return;
     }
@@ -78,7 +78,7 @@ export class Pet {
   }
 
   event() {
-    if (this.hunger < 10 || this.energy < 5) {
+    if (this.hunger > 90 || this.energy < 5) {
       alert("Питомец устал или голоден, отдохните или покормите его");
       return;
     }
