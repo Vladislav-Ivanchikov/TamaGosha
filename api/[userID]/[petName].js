@@ -1,9 +1,10 @@
-// import express, { json } from "express";
+import express, { json } from "express";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
+
 dotenv.config();
-// const app = express();
-// app.use(json());
+const app = express();
+app.use(json());
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
@@ -13,11 +14,13 @@ let db;
 async function connectToDB() {
   if (!db) {
     try {
+      console.log("Попытка подключения к MongoDB...");
       await client.connect();
       db = client.db("tamagosha");
-      console.log("Connected to DB:", db.databaseName);
+      console.log("Подключено к базе данных:", db.databaseName);
     } catch (e) {
-      console.error("Error connecting to DB:", e);
+      console.error("Ошибка подключения к базе данных:", e);
+      throw e;
     }
   }
   return db;
@@ -48,48 +51,3 @@ export default async function handler(req, res) {
     res.status(500).send("Error handling request");
   }
 }
-
-// const port = 3000;
-// app.listen(port, () => {
-//   console.log(`Сервер запущен на порту ${port}`);
-// });
-
-// connectToDB().catch((e) => console.error("Error connecting to DB:", e));
-
-// app.get("/pet/:userID/:petName", async (req, res) => {
-//   const { petName, userID } = req.params;
-//   try {
-//     if (!db) {
-//       throw new Error("DB not connected");
-//     }
-//     const collection = db.collection("pets");
-//     const pet = await collection.findOne({ userID, petName });
-//     res.json(pet || { error: "Pet not found" });
-//   } catch (e) {
-//     console.error("Error getting pet:", e);
-//     res.status(500).send("Error getting pet");
-//   }
-// });
-
-// app.post("/pet/:userID/:petName", async (req, res) => {
-//   const { petName, userID } = req.params;
-//   try {
-//     if (!db) {
-//       throw new Error("DB not connected");
-//     }
-//     const collection = db.collection("pets");
-//     const petData = { userID, petName, ...req.body };
-//     delete petData._id;
-//     await collection.updateOne(
-//       { userID, petName },
-//       { $set: petData },
-//       { upsert: true }
-//     );
-//     res.status(200).send("Pet saved");
-//   } catch (e) {
-//     console.error("Error saving pet:", e);
-//     res.status(500).send("Error saving pet");
-//   }
-// });
-
-// export default app;

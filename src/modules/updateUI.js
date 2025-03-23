@@ -14,8 +14,8 @@ const petBars = [hungerBar, happinessBar, healthBar, energyBar];
 const petButtons = [feedBtn, playBtn, healBtn, eventBtn];
 
 export function updatePet(pet) {
-  updatePetBars(pet);
   updatePetImg(pet);
+  updatePetBars(pet);
   updateWarningButtons(pet);
 }
 

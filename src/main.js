@@ -1,12 +1,13 @@
 import { Pet } from "./modules/pet.js";
 import { updatePet } from "./modules/updateUI.js";
 import {
-  loadData,
-  loadPetName,
+  getUserID,
   saveData,
   savePetName,
-  getUserID,
+  loadData,
+  loadPetName,
 } from "./modules/storage.js";
+import { createModal } from "./modules/createModal.js";
 
 const userID = getUserID();
 let pet;
