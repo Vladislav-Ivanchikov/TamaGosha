@@ -45,7 +45,7 @@ export async function loadData(userID, petName) {
       console.error("Error loading data:", data.error);
       return null;
     }
-    console.log("Data loaded:", data);
+    console.log("Data loaded for", data.name);
     const pet = new Pet(data.name);
     Object.assign(pet, data);
     return pet;

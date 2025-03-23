@@ -14,9 +14,8 @@ const petBars = [hungerBar, happinessBar, healthBar, energyBar];
 const petButtons = [feedBtn, playBtn, healBtn, eventBtn];
 
 export function updatePet(pet) {
-  updatePetImg(pet);
   updatePetBars(pet);
-  updateWarningButtons(pet);
+  updatePetImg(pet, petStates);
 }
 
 function updatePetBars(pet) {
@@ -35,54 +34,62 @@ function updatePetBars(pet) {
   }
 }
 
-function updatePetImg(pet) {
-  const petStates = {
-    die: { src: "../petImg/die.jpg", bgColor: "transparent", classes: [] },
-    hungry: {
-      src: "../petImg/hungry1.jpg",
-      bgColor: "yellow",
-      classes: ["hungry"],
-      textColor: "black",
-    },
-    sick: {
-      src: "../petImg/ill1.jpg",
-      bgColor: "red",
-      classes: ["sick"],
-      textColor: "black",
-    },
-    happy: {
-      src: "../petImg/happy1.jpg",
-      bgColor: "green",
-      classes: ["happy"],
-      textColor: "white",
-    },
-  };
-
-  let state;
+function updatePetImg(pet, state) {
   if (pet.hunger === 100 || pet.happiness === 0 || pet.health === 0) {
-    state = petStates.die;
-  } else if (pet.hunger > 70 && pet.health > 20) {
-    state = petStates.hungry;
-  } else if (pet.health < 30) {
-    state = petStates.sick;
+    pet.state = state.die;
+  } else if (pet.hunger > 80 && pet.health > 20) {
+    pet.state = state.hungry;
+  } else if (pet.health < 20) {
+    pet.state = state.sick;
+  } else if (pet.happiness < 20) {
+    pet.state = state.sad;
   } else {
-    state = petStates.happy;
+    pet.state = state.happy;
   }
 
-  petImg.src = state.src;
-  myPetWrapper.style.backgroundColor = state.bgColor;
-  myPetWrapper.className = state.classes.join(" ");
+  petImg.src = pet.state.src;
+  myPetWrapper.style.backgroundColor = pet.state.bgColor;
+  myPetWrapper.className = pet.state.classes.join(" ");
   petName.style.color = state.textColor || "black";
+  updateWarningButtons(pet.state.classes[0]);
 }
 
-function updateWarningButtons(pet) {
-  pet.state.class === "hungry"
+function updateWarningButtons(stateClass) {
+  stateClass === "hungry"
     ? feedBtn.classList.add("warning")
     : feedBtn.classList.remove("warning");
-  pet.state.class === "sick"
+  stateClass === "sick"
     ? healBtn.classList.add("warning")
     : healBtn.classList.remove("warning");
-  pet.happiness < 20
+  stateClass === "sad"
     ? playBtn.classList.add("warning")
     : playBtn.classList.remove("warning");
 }
+
+const petStates = {
+  die: { src: "../petImg/die.jpg", bgColor: "transparent", classes: [] },
+  hungry: {
+    src: "../petImg/hungry1.jpg",
+    bgColor: "yellow",
+    classes: ["hungry"],
+    textColor: "black",
+  },
+  sick: {
+    src: "../petImg/ill1.jpg",
+    bgColor: "red",
+    classes: ["sick"],
+    textColor: "black",
+  },
+  happy: {
+    src: "../petImg/happy1.jpg",
+    bgColor: "green",
+    classes: ["happy"],
+    textColor: "white",
+  },
+  sad: {
+    src: "../petImg/sad1.jpg",
+    bgColor: "blue",
+    classes: ["sad"],
+    textColor: "white",
+  },
+};
