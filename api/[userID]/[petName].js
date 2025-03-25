@@ -1,4 +1,4 @@
-import { connectToDB } from "../../src/modules/funcs/connectToDB";
+import { connectToDB } from "../../src/modules/funcs/connectToDB.js";
 
 export default async function handler(req, res) {
   const { petName, userID } = req.query;
