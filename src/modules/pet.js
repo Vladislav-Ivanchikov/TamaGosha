@@ -6,7 +6,7 @@ export class Pet {
     this.health = 80;
     this.energy = 70;
     this.coins = 15;
-    this.lastVisit = new Date();
+    this.lastVisit = Date.now();
     this.lastPlayCount = 0;
     this.isAlive = true;
     this.state = { class: "happy" }; //  "hungry", "ill", "happy"
@@ -18,10 +18,20 @@ export class Pet {
       time: new Date().toUTCString(),
       desc: desc,
     });
+    if (this.logInfo.length > 50) this.logInfo.shift();
   }
 
   getLog() {
     return this.logInfo;
+  }
+
+  getState() {
+    if (this.hunger === 100 || this.happiness === 0 || this.health === 0)
+      return "die";
+    if (this.hunger > 80 && this.health > 20) return "hungry";
+    if (this.health < 20) return "sick";
+    if (this.happiness < 20) return "sad";
+    return "happy";
   }
 
   feed() {
@@ -127,8 +137,11 @@ export class Pet {
   }
 
   update() {
-    if (!this.isAlive) return;
-    const now = new Date();
+    if (!this.isAlive) {
+      localStorage.clear();
+      return;
+    }
+    const now = Date.now();
     this.hunger = Math.min(100, this.hunger + 0.2);
     this.happiness = Math.max(0, this.happiness - 0.2);
     this.hunger > 70

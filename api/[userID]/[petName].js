@@ -1,30 +1,4 @@
-import express, { json } from "express";
-import { MongoClient } from "mongodb";
-import dotenv from "dotenv";
-
-dotenv.config();
-const app = express();
-app.use(json());
-
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
-
-let db;
-
-async function connectToDB() {
-  if (!db) {
-    try {
-      console.log("Попытка подключения к MongoDB...");
-      await client.connect();
-      db = client.db("tamagosha");
-      console.log("Подключено к базе данных:", db.databaseName);
-    } catch (e) {
-      console.error("Ошибка подключения к базе данных:", e);
-      throw e;
-    }
-  }
-  return db;
-}
+import { connectToDB } from "../../src/modules/funcs/connectToDB";
 
 export default async function handler(req, res) {
   const { petName, userID } = req.query;
@@ -32,13 +6,13 @@ export default async function handler(req, res) {
     await connectToDB();
     const collection = db.collection("pets");
     if (req.method === "GET") {
-      const pet = await collection.findOne({ userID, petName });
+      const pet = await collection.findOne({ userID, name: petName });
       res.status(200).json(pet || { error: "Pet not found" });
     } else if (req.method === "POST") {
-      const petData = { userID, petName, ...req.body };
+      const petData = { userID, ...req.body };
       delete petData._id;
       await collection.updateOne(
-        { userID, petName },
+        { userID, name: petData.name },
         { $set: petData },
         { upsert: true }
       );
@@ -49,5 +23,7 @@ export default async function handler(req, res) {
   } catch (e) {
     console.error("Error handling request:", e);
     res.status(500).send("Error handling request");
+  } finally {
+    if (client.isConnected()) await client.close();
   }
 }

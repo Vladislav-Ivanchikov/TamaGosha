@@ -1,4 +1,4 @@
-export function createModal(title, content) {
+export default function createModal(title, content) {
   const modal = document.createElement("div");
   modal.classList.add("log-modal");
 
@@ -8,7 +8,7 @@ export function createModal(title, content) {
   const closeBtn = document.createElement("span");
   closeBtn.classList.add("close");
   closeBtn.innerHTML = "&times;";
-  closeBtn.onclick = () => (modal.style.display = "none");
+  closeBtn.onclick = () => document.body.removeChild(modal);
 
   const modalTitle = document.createElement("h2");
   modalTitle.textContent = title;

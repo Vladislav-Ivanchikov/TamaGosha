@@ -1,5 +1,7 @@
 import { Pet } from "./pet.js";
 
+let cachedPet = null;
+
 export function getUserID() {
   let id = localStorage.getItem("userID");
   if (!id) {
@@ -26,6 +28,7 @@ export async function saveData(userID, pet) {
     }
   } catch (e) {
     console.error("Error saving data:", e);
+    throw e;
   }
 }
 
@@ -38,6 +41,10 @@ export function savePetName(petName) {
 }
 
 export async function loadData(userID, petName) {
+  if (cachedPet && cachedPet.userID === userID && cachedPet.name === petName) {
+    console.log("Data loaded from cache for", cachedPet.name);
+    return cachedPet;
+  }
   try {
     const res = await fetch(`/api/${userID}/${petName}`);
     const data = await res.json();
@@ -48,6 +55,7 @@ export async function loadData(userID, petName) {
     console.log("Data loaded for", data.name);
     const pet = new Pet(data.name);
     Object.assign(pet, data);
+    cachedPet = pet;
     return pet;
   } catch (e) {
     console.error("Error loading data:", e);

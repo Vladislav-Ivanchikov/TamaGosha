@@ -34,24 +34,19 @@ function updatePetBars(pet) {
   }
 }
 
-function updatePetImg(pet, state) {
-  if (pet.hunger === 100 || pet.happiness === 0 || pet.health === 0) {
-    pet.state = state.die;
-  } else if (pet.hunger > 80 && pet.health > 20) {
-    pet.state = state.hungry;
-  } else if (pet.health < 20) {
-    pet.state = state.sick;
-  } else if (pet.happiness < 20) {
-    pet.state = state.sad;
+function updatePetImg(pet, states) {
+  let state = null;
+  if (!pet.isAlive) {
+    state = states.die;
   } else {
-    pet.state = state.happy;
+    state = states[pet.getState()];
   }
-
-  petImg.src = pet.state.src;
-  myPetWrapper.style.backgroundColor = pet.state.bgColor;
-  myPetWrapper.className = pet.state.classes.join(" ");
+  pet.state = state.classes[0];
+  petImg.src = state.src;
+  myPetWrapper.style.backgroundColor = state.bgColor;
+  myPetWrapper.className = state.classes.join(" ");
   petName.style.color = state.textColor || "black";
-  updateWarningButtons(pet.state.classes[0]);
+  updateWarningButtons(pet.state);
 }
 
 function updateWarningButtons(stateClass) {

@@ -32,7 +32,7 @@ body {
   background: #fff;
   border-radius: 20px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Тень */
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 /* Блок с питомцем */
@@ -301,6 +301,17 @@ button:disabled {
 }
 
 /* Адаптивность для мобильных устройств */
+
+@media (max-width: 600px) {
+  #app {
+    max-width: 100%;
+  }
+  #petImage {
+    width: 180px;
+    height: 180px;
+  }
+}
+
 @media (max-width: 400px) {
   #app {
     max-width: 100%;
