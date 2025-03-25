@@ -1,9 +1,13 @@
 import { connectToDB } from "../../src/modules/funcs/connectToDB.js";
+import { MongoClient } from "mongodb";
+
+const client = new MongoClient(process.env.MONGODB_URI);
+console.log(process.env.MONGODB_URI);
 
 export default async function handler(req, res) {
   const { petName, userID } = req.query;
   try {
-    await connectToDB();
+    const db = await connectToDB();
     const collection = db.collection("pets");
     if (req.method === "GET") {
       const pet = await collection.findOne({ userID, name: petName });
