@@ -9,8 +9,8 @@ import {
 } from "./modules/storage.js";
 import createModal from "./modules/funcs/createModal.js";
 
-const userID = getUserID();
 let pet;
+const userID = getUserID();
 const lastPetName = loadPetName();
 
 const UI_INTERVAL = 1000;
@@ -48,12 +48,6 @@ const BD_INTERVAL = 10000;
     updatePet(pet);
     document.getElementById("petName").textContent =
       pet.name[0].toUpperCase() + pet.name.slice(1);
-
-    async function actionHandler(action) {
-      action();
-      await saveData(userID, pet);
-      updatePet(pet);
-    }
 
     document.getElementById("feedBtn").addEventListener("click", () => {
       actionHandler(() => pet.feed());
@@ -116,3 +110,15 @@ const BD_INTERVAL = 10000;
     alert("Произошла ошибка при загрузке приложения. Попробуйте позже.");
   }
 })();
+
+async function actionHandler(action) {
+  action();
+  await saveData(userID, pet);
+  updatePet(pet);
+}
+
+// function audioHandler(e) {
+//   audioType = e.target.id.slice(0, -3);
+//   console.log(audioType);
+//   audioEffects[audioType].play();
+// }

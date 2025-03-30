@@ -52,13 +52,18 @@ export class Pet {
       alert("Питомец не голоден");
       return;
     }
-    const food = foods[Math.floor(Math.random() * foods.length)];
-    this.hunger = Math.max(0, this.hunger + food.hunger);
-    this.happiness = Math.min(100, this.happiness + (food.happiness || 0));
-    this.health = Math.max(0, this.health + (food.health || 0));
-    alert(`Вы покормили ${this.name} ${food.name}`);
-    this.addLog(`Вы покормили ${this.name} ${food.name}`);
-    this.checkIsAlive();
+    try {
+      const food = foods[Math.floor(Math.random() * foods.length)];
+      this.hunger = Math.max(0, this.hunger + food.hunger);
+      this.happiness = Math.min(100, this.happiness + (food.happiness || 0));
+      this.health = Math.max(0, this.health + (food.health || 0));
+      audioEffects.feed.play();
+      alert(`Вы покормили ${this.name} ${food.name}`);
+      this.addLog(`Вы покормили ${this.name} ${food.name}`);
+      this.checkIsAlive();
+    } catch (e) {
+      console.error("Ошибка при кормлении питомца:", e);
+    }
   }
 
   play() {
@@ -71,37 +76,48 @@ export class Pet {
       alert("Недостаточно энергии");
       return;
     }
-    this.lastPlayCount++;
-    this.energy -= energyCost;
-    if (this.lastPlayCount > 2) {
-      this.hunger = Math.max(0, this.hunger + 3);
+    try {
+      this.lastPlayCount++;
+      this.energy -= energyCost;
+      if (this.lastPlayCount > 2) {
+        this.hunger = Math.max(0, this.hunger + 3);
+      }
+      this.happiness = Math.min(100, this.happiness + 10);
+      this.coins += 5;
+      setTimeout(() => {
+        this.lastPlayCount = Math.max(0, this.lastPlayCount - 1);
+      }, 60000);
+      audioEffects.play.play();
+      alert(`Вы поиграли с ${this.name} и заработали 5 монет`);
+      this.addLog(`Вы поиграли с ${this.name}`);
+      this.checkIsAlive();
+    } catch (e) {
+      console.error("Ошибка при игре с питомцем:", e);
     }
-    this.happiness = Math.min(100, this.happiness + 5);
-    this.coins += 5;
-    setTimeout(() => {
-      this.lastPlayCount = Math.max(0, this.lastPlayCount - 1);
-    }, 60000);
-    alert(`Вы поиграли с ${this.name} и заработали 5 монет`);
-    this.addLog(`Вы поиграли с ${this.name} и заработали 5 монет`);
-    this.checkIsAlive();
   }
 
   heal(type) {
-    const heal = heals[type];
-    if (this.coins < heal.cost) {
-      alert("Недостаточно монет");
-      return;
+    try {
+      const heal = heals[type];
+      if (this.coins < heal.cost) {
+        alert("Недостаточно монет");
+        return;
+      }
+      this.coins -= heal.cost;
+      this.health = Math.min(100, this.health + heal.health);
+      if (heal.energy) this.energy = Math.min(100, this.energy + heal.energy);
+      audioEffects.heal.volume = 0.4;
+      audioEffects.heal.play();
+      alert(`Вы вылечили ${this.name} ${type}`);
+      this.addLog(`Вы вылечили ${this.name} ${type}`);
+      this.checkIsAlive();
+    } catch (e) {
+      console.error("Ошибка при лечении питомца:", e);
     }
-    this.coins -= heal.cost;
-    this.health = Math.min(100, this.health + heal.health);
-    if (heal.energy) this.energy = Math.min(100, this.energy + heal.energy);
-    alert(`Вы вылечили ${this.name} ${type}`);
-    this.addLog(`Вы вылечили ${this.name} ${type}`);
-    this.checkIsAlive();
   }
 
   event() {
-    if (this.hunger > 90 || this.energy < 5) {
+    if (this.hunger > 90 || this.energy < 10) {
       alert("Питомец устал или голоден, отдохните или покормите его");
       return;
     }
@@ -125,7 +141,7 @@ export class Pet {
 
     this.hunger = Math.min(100, this.hunger + 0.1 * elapsed);
     this.happiness = Math.max(0, this.happiness - 0.1 * elapsed);
-    this.energy = Math.min(100, this.energy + 0.15 * elapsed);
+    this.energy = Math.min(100, this.energy + 0.2 * elapsed);
 
     if (this.hunger > 80 && this.happiness < 20)
       this.health = Math.max(0, this.health - 0.18 * elapsed);
@@ -171,7 +187,7 @@ const heals = {
   strong: { health: 40, cost: 30, energy: 10 },
 };
 
-const events = [
+export const events = [
   { desc: "Питомец нашел клад!", type: "extra", happiness: 20, coins: 25 }, // Положительное
   { desc: "Питомец устал", type: "rare", energy: -30 }, // Отрицательное
   { desc: "Питомец выспался", type: "extra", energy: 40 }, // Положительное
@@ -228,3 +244,51 @@ const events = [
     energy: 20,
   }, // Положительное
 ];
+
+const audioEffects = {
+  feed: new Audio("../audio/feed.mp3"),
+  play: new Audio("../audio/play.mp3"),
+  heal: new Audio("../audio/heal.mp3"),
+  happy: new Audio("../audio/happy.mp3"),
+  hungry: new Audio("../audio/hungry.mp3"),
+  sad: new Audio("../audio/sad.mp3"),
+  sick: new Audio("../audio/sick.mp3"),
+  die: new Audio("../audio/die.mp3"),
+};
+
+export const petStates = {
+  die: {
+    src: "../petImg/die.jpg",
+    audio: audioEffects.die,
+    bgColor: "transparent",
+    classes: ["die"],
+  },
+  hungry: {
+    src: "../petImg/hungry1.jpg",
+    audio: audioEffects.hungry,
+    bgColor: "yellow",
+    classes: ["hungry"],
+    textColor: "black",
+  },
+  happy: {
+    src: "../petImg/happy1.jpg",
+    audio: audioEffects.happy,
+    bgColor: "green",
+    classes: ["happy"],
+    textColor: "white",
+  },
+  sad: {
+    src: "../petImg/sad1.jpg",
+    audio: audioEffects.sad,
+    bgColor: "blue",
+    classes: ["sad"],
+    textColor: "white",
+  },
+  sick: {
+    src: "../petImg/ill1.jpg",
+    audio: audioEffects.sick,
+    bgColor: "red",
+    classes: ["sick"],
+    textColor: "black",
+  },
+};
