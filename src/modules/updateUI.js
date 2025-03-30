@@ -46,7 +46,7 @@ function updatePetImg(pet, states) {
   pet.state = state.classes[0];
   petImg.src = state.src;
 
-  if (audio !== state.audio) {
+  if (audio && audio !== state.audio) {
     audio = state.audio;
     audio.play();
   }

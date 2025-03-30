@@ -67,8 +67,8 @@ export class Pet {
   }
 
   play() {
-    if (this.hunger > 90 || this.energy < 10) {
-      alert("Питомец устал или голоден, отдохните или покормите его");
+    if (this.hunger > 90 || this.energy < 10 || this.happiness > 90) {
+      alert(`${this.name} сейчас не до игр`);
       return;
     }
     const energyCost = this.lastPlayCount > 2 ? 15 : 10;
@@ -116,7 +116,18 @@ export class Pet {
     }
   }
 
-  event() {
+  event(offline = false) {
+    if (offline) {
+      const event = this.getRandomEvent();
+      if (event.happiness)
+        this.happiness = Math.min(100, this.happiness + event.happiness);
+      if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
+      if (event.health) this.health = Math.min(100, this.health + event.health);
+      if (event.energy) this.energy = Math.min(100, this.energy + event.energy);
+      this.addLog(event.desc);
+      this.checkIsAlive();
+      return;
+    }
     if (this.hunger > 90 || this.energy < 10) {
       alert("Питомец устал или голоден, отдохните или покормите его");
       return;
@@ -149,8 +160,8 @@ export class Pet {
       ? (this.health = Math.max(0, this.health - 0.12 * elapsed))
       : (this.health = Math.max(0, this.health - 0.05 * elapsed));
 
-    if (elapsed > 60) this.event();
-    if (elapsed > 1800) this.event();
+    if (elapsed > 60) this.event(true);
+    if (elapsed > 1800) this.event(true);
 
     this.checkIsAlive();
   }
