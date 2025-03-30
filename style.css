@@ -19,7 +19,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 /* Контейнер приложения */
@@ -28,7 +27,6 @@ body {
   grid-template-rows: 2fr 2fr 1fr; /* Разделение на 3 части */
   margin: 0 auto;
   max-width: 400px;
-  height: 98vh;
   background: #fff;
   border-radius: 20px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Тень */
@@ -138,6 +136,7 @@ progress {
 progress[value] {
   -webkit-appearance: none;
   appearance: none;
+  transition: value 0.5s ease-out; /* Плавное изменение значения */
 }
 
 progress[value]::-webkit-progress-bar {

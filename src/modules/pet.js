@@ -9,7 +9,7 @@ export class Pet {
     this.lastVisit = Date.now();
     this.lastPlayCount = 0;
     this.isAlive = true;
-    this.state = { class: "happy" }; //  "hungry", "ill", "happy"
+    this.state = "happy"; //  "hungry", "ill", "happy"
     this.logInfo = [];
   }
 
@@ -26,12 +26,25 @@ export class Pet {
   }
 
   getState() {
-    if (this.hunger === 100 || this.happiness === 0 || this.health === 0)
-      return "die";
+    if (this.health === 0) return "die";
     if (this.hunger > 80 && this.health > 20) return "hungry";
+    if (this.happiness < 20 && this.health > 20) return "sad";
     if (this.health < 20) return "sick";
-    if (this.happiness < 20) return "sad";
     return "happy";
+  }
+
+  getRandomEvent() {
+    let eventType;
+    const chance = Math.random();
+    if (chance < 0.05) eventType = "extra";
+    else if (chance < 0.35) eventType = "rare";
+    else eventType = "common";
+    const filteredEvents = events.filter((item) => item.type === eventType);
+    if (filteredEvents.length === 0) {
+      console.error(`Нет событий типа "${eventType}"`);
+      return null;
+    }
+    return filteredEvents[Math.floor(Math.random() * filteredEvents.length)];
   }
 
   feed() {
@@ -63,7 +76,7 @@ export class Pet {
     if (this.lastPlayCount > 2) {
       this.hunger = Math.max(0, this.hunger + 3);
     }
-    this.happiness = Math.min(100, this.happiness + 10);
+    this.happiness = Math.min(100, this.happiness + 5);
     this.coins += 5;
     setTimeout(() => {
       this.lastPlayCount = Math.max(0, this.lastPlayCount - 1);
@@ -96,7 +109,7 @@ export class Pet {
     this.energy -= 10;
     if (event.happiness)
       this.happiness = Math.min(100, this.happiness + event.happiness);
-    if (event.coins) this.coins += event.coins;
+    if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
     if (event.health) this.health = Math.min(100, this.health + event.health);
     if (event.energy) this.energy = Math.min(100, this.energy + event.energy);
     alert(event.desc);
@@ -104,22 +117,30 @@ export class Pet {
     this.checkIsAlive();
   }
 
-  getRandomEvent() {
-    let eventType;
-    const chance = Math.random();
-    if (chance < 0.05) eventType = "extra";
-    else if (chance < 0.35) eventType = "rare";
-    else eventType = "common";
-    const filteredEvents = events.filter((item) => item.type === eventType);
-    if (filteredEvents.length === 0) {
-      console.error(`Нет событий типа "${eventType}"`);
-      return null;
-    }
-    return filteredEvents[Math.floor(Math.random() * filteredEvents.length)];
+  update() {
+    if (!this.isAlive) return;
+    const now = Date.now();
+    const elapsed = (now - this.lastVisit) / 1000;
+    this.lastVisit = now;
+
+    this.hunger = Math.min(100, this.hunger + 0.1 * elapsed);
+    this.happiness = Math.max(0, this.happiness - 0.1 * elapsed);
+    this.energy = Math.min(100, this.energy + 0.15 * elapsed);
+
+    if (this.hunger > 80 && this.happiness < 20)
+      this.health = Math.max(0, this.health - 0.18 * elapsed);
+    this.hunger > 80 || this.happiness < 20
+      ? (this.health = Math.max(0, this.health - 0.12 * elapsed))
+      : (this.health = Math.max(0, this.health - 0.05 * elapsed));
+
+    if (elapsed > 60) this.event();
+    if (elapsed > 1800) this.event();
+
+    this.checkIsAlive();
   }
 
   checkIsAlive() {
-    if (this.hunger === 100 || this.happiness === 0 || this.health === 0) {
+    if (this.health === 0) {
       this.isAlive = false;
       this.logInfo.push({
         time: new Date().toUTCString(),
@@ -135,38 +156,19 @@ export class Pet {
       }, 2000);
     }
   }
-
-  update() {
-    if (!this.isAlive) {
-      localStorage.clear();
-      return;
-    }
-    const now = Date.now();
-    this.hunger = Math.min(100, this.hunger + 0.2);
-    this.happiness = Math.max(0, this.happiness - 0.2);
-    this.hunger > 70
-      ? (this.health = Math.max(0, this.health - 0.12))
-      : (this.health = Math.max(0, this.health - 0.05));
-    this.energy = Math.min(100, this.energy + 0.4);
-    const offlineTime = (now - this.lastVisit) / 1000;
-    if (offlineTime > 4 * 3600) this.event();
-    if (offlineTime > 8 * 3600 && offlineTime % (2 * 3600) < 2) this.event();
-    this.lastVisit = now;
-    this.checkIsAlive();
-  }
 }
 
 const foods = [
   { name: "Корм", hunger: -20 },
-  { name: "Лакомство", hunger: -10, happiness: 5, health: -5 },
+  { name: "Лакомство", hunger: -10, happiness: 5 },
   { name: "Сочная курочка", hunger: -30, happiness: 10 },
   { name: "Вчерашний суп", hunger: -15, happiness: -5 },
 ];
 
 const heals = {
   weak: { health: 10, cost: 10 },
-  medium: { health: 20, cost: 20 },
-  strong: { health: 30, cost: 30, energy: 10 },
+  medium: { health: 30, cost: 20 },
+  strong: { health: 40, cost: 30, energy: 10 },
 };
 
 const events = [
@@ -180,23 +182,23 @@ const events = [
   { desc: "Питомец нашел монету", type: "common", coins: 5 }, // Положительное
   { desc: "Питомец порвал игрушку", type: "common", happiness: -8 }, // Отрицательное
   { desc: "Жаркий день", type: "common", happiness: -10, energy: -10 }, // Отрицательное
-  { desc: "Питомец нашел вкусняшку", type: "common", hunger: -8 }, // Положительное
-  { desc: "Питомец поиграл с бабочкой", type: "common", happiness: 5 }, // Положительное
-  { desc: "Питомец получил похвалу", type: "common", happiness: 5 }, // Положительное
-  { desc: "Питомец нашел удобное место для сна", type: "common", energy: 10 }, // Положительное
+  { desc: "Питомец нашел вкусняшку", type: "common", hunger: -10 }, // Положительное
+  { desc: "Питомец поиграл с бабочкой", type: "common", happiness: 10 }, // Положительное
+  { desc: "Питомец получил похвалу", type: "common", happiness: 10 }, // Положительное
+  { desc: "Питомец нашел удобное место для сна", type: "common", energy: 20 }, // Положительное
   {
     desc: "Питомец научился новому трюку",
     type: "common",
-    happiness: 5,
-    coins: 2,
+    happiness: 10,
+    coins: 5,
   }, // Положительное
-  { desc: "Питомец получил массаж", type: "common", health: 5 }, // Положительное
-  { desc: "Питомец нашел старую игрушку", type: "common", happiness: 3 }, // Положительное
+  { desc: "Питомец получил массаж", type: "common", health: 10 }, // Положительное
+  { desc: "Питомец нашел старую игрушку", type: "common", happiness: 5 }, // Положительное
   { desc: "Питомец уронил еду", type: "common", hunger: 10 }, // Отрицательное
   { desc: "Питомец заскучал", type: "common", happiness: -5 }, // Отрицательное
   { desc: "Питомец поцарапался", type: "common", health: -5 }, // Отрицательное
   { desc: "Питомец устал от шума", type: "common", energy: -10 }, // Отрицательное
-  { desc: "Питомец потерял монету", type: "common", coins: -2 }, // Отрицательное
+  { desc: "Питомец потерял монету", type: "common", coins: -5 }, // Отрицательное
   { desc: "Питомец съел что-то не то", type: "common", health: -8, hunger: -8 }, // Отрицательное
   {
     desc: "Питомец застрял в кустах",

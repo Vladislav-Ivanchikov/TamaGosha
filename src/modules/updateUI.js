@@ -16,14 +16,11 @@ const petButtons = [feedBtn, playBtn, healBtn, eventBtn];
 export function updatePet(pet) {
   updatePetBars(pet);
   updatePetImg(pet, petStates);
+  updateWarningButtons(pet);
 }
 
 function updatePetBars(pet) {
   if (!pet.isAlive) {
-    petButtons.forEach((btn) => {
-      btn.classList.remove("warning");
-      btn.disabled = true;
-    });
     petBars.forEach((bar) => (bar.value = "0"));
   } else {
     hungerBar.value = pet.hunger;
@@ -46,23 +43,27 @@ function updatePetImg(pet, states) {
   myPetWrapper.style.backgroundColor = state.bgColor;
   myPetWrapper.className = state.classes.join(" ");
   petName.style.color = state.textColor || "black";
-  updateWarningButtons(pet.state);
 }
 
-function updateWarningButtons(stateClass) {
-  stateClass === "hungry"
-    ? feedBtn.classList.add("warning")
-    : feedBtn.classList.remove("warning");
-  stateClass === "sick"
-    ? healBtn.classList.add("warning")
-    : healBtn.classList.remove("warning");
-  stateClass === "sad"
-    ? playBtn.classList.add("warning")
-    : playBtn.classList.remove("warning");
+function updateWarningButtons(pet) {
+  if (!pet.isAlive) {
+    petButtons.forEach((btn) => (btn.disabled = true));
+    petButtons.forEach((btn) => btn.classList.remove("warning"));
+  } else {
+    pet.hunger > 80
+      ? feedBtn.classList.add("warning")
+      : feedBtn.classList.remove("warning");
+    pet.happiness < 20
+      ? playBtn.classList.add("warning")
+      : playBtn.classList.remove("warning");
+    pet.health < 20
+      ? healBtn.classList.add("warning")
+      : healBtn.classList.remove("warning");
+  }
 }
 
 const petStates = {
-  die: { src: "../petImg/die.jpg", bgColor: "transparent", classes: [] },
+  die: { src: "../petImg/die.jpg", bgColor: "transparent", classes: ["die"] },
   hungry: {
     src: "../petImg/hungry1.jpg",
     bgColor: "yellow",

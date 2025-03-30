@@ -13,6 +13,9 @@ const userID = getUserID();
 let pet;
 const lastPetName = loadPetName();
 
+const UI_INTERVAL = 1000;
+const BD_INTERVAL = 10000;
+
 (async () => {
   try {
     if (lastPetName) {
@@ -46,16 +49,18 @@ const lastPetName = loadPetName();
     document.getElementById("petName").textContent =
       pet.name[0].toUpperCase() + pet.name.slice(1);
 
-    document.getElementById("feedBtn").addEventListener("click", async () => {
-      pet.feed();
+    async function actionHandler(action) {
+      action();
       await saveData(userID, pet);
       updatePet(pet);
+    }
+
+    document.getElementById("feedBtn").addEventListener("click", () => {
+      actionHandler(() => pet.feed());
     });
 
-    document.getElementById("playBtn").addEventListener("click", async () => {
-      pet.play();
-      await saveData(userID, pet);
-      updatePet(pet);
+    document.getElementById("playBtn").addEventListener("click", () => {
+      actionHandler(() => pet.play());
     });
 
     document.getElementById("healBtn").addEventListener("click", async () => {
@@ -64,15 +69,11 @@ const lastPetName = loadPetName();
         alert("Неверный тип лечения");
         return;
       }
-      pet.heal(type);
-      await saveData(userID, pet);
-      updatePet(pet);
+      actionHandler(() => pet.heal(type));
     });
 
     document.getElementById("eventBtn").addEventListener("click", async () => {
-      pet.event();
-      await saveData(userID, pet);
-      updatePet(pet);
+      actionHandler(() => pet.event());
     });
 
     document.getElementById("logBtn").addEventListener("click", () => {
@@ -91,15 +92,25 @@ const lastPetName = loadPetName();
 
     setInterval(async () => {
       if (!pet.isAlive) {
-        localStorage.removeItem("petName");
-        await saveData(userID, pet);
+        localStorage.clear();
         return;
       } else {
         pet.update();
         updatePet(pet);
-        await saveData(userID, pet);
       }
-    }, 2000);
+    }, UI_INTERVAL);
+
+    let lastSavedPet = JSON.stringify(pet);
+    setInterval(async () => {
+      if (!pet.isAlive) {
+        saveData(userID, pet);
+        return;
+      }
+      const petStr = JSON.stringify(pet);
+      if (petStr === lastSavedPet) return;
+      await saveData(userID, pet);
+      lastSavedPet = petStr;
+    }, BD_INTERVAL);
   } catch (e) {
     console.error("Ошибка инициализации приложения:", e);
     alert("Произошла ошибка при загрузке приложения. Попробуйте позже.");
