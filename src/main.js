@@ -1,5 +1,5 @@
 import { Pet } from "./modules/pet.js";
-import { updatePet } from "./modules/updateUI.js";
+import { updatePet, audioEffects } from "./modules/updateUI.js";
 import {
   getUserID,
   saveData,
@@ -9,6 +9,7 @@ import {
 } from "./modules/storage.js";
 import createModal from "./modules/funcs/createModal.js";
 
+let audioType;
 let pet;
 const userID = getUserID();
 const lastPetName = loadPetName();
@@ -49,25 +50,25 @@ const BD_INTERVAL = 10000;
     document.getElementById("petName").textContent =
       pet.name[0].toUpperCase() + pet.name.slice(1);
 
-    document.getElementById("feedBtn").addEventListener("click", () => {
-      actionHandler(() => pet.feed());
+    document.getElementById("feedBtn").addEventListener("click", (e) => {
+      actionHandler(() => pet.feed(), e);
     });
 
-    document.getElementById("playBtn").addEventListener("click", () => {
-      actionHandler(() => pet.play());
+    document.getElementById("playBtn").addEventListener("click", (e) => {
+      actionHandler(() => pet.play(), e);
     });
 
-    document.getElementById("healBtn").addEventListener("click", async () => {
+    document.getElementById("healBtn").addEventListener("click", async (e) => {
       const type = prompt("Введите тип лечения (weak, medium, strong)");
       if (type !== "weak" && type !== "medium" && type !== "strong") {
         alert("Неверный тип лечения");
         return;
       }
-      actionHandler(() => pet.heal(type));
+      await actionHandler(() => pet.heal(type), e);
     });
 
-    document.getElementById("eventBtn").addEventListener("click", async () => {
-      actionHandler(() => pet.event());
+    document.getElementById("eventBtn").addEventListener("click", async (e) => {
+      actionHandler(() => pet.event(), e);
     });
 
     document.getElementById("logBtn").addEventListener("click", () => {
@@ -111,14 +112,19 @@ const BD_INTERVAL = 10000;
   }
 })();
 
-async function actionHandler(action) {
+async function actionHandler(action, e) {
+  audioHandler(e);
   action();
   await saveData(userID, pet);
   updatePet(pet);
 }
 
-// function audioHandler(e) {
-//   audioType = e.target.id.slice(0, -3);
-//   console.log(audioType);
-//   audioEffects[audioType].play();
-// }
+function audioHandler(e) {
+  audioType = e.target.id.slice(0, -3);
+  const audio = audioEffects[audioType];
+  if (!audio.paused) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+  audio.play();
+}

@@ -57,7 +57,6 @@ export class Pet {
       this.hunger = Math.max(0, this.hunger + food.hunger);
       this.happiness = Math.min(100, this.happiness + (food.happiness || 0));
       this.health = Math.max(0, this.health + (food.health || 0));
-      audioEffects.feed.play();
       alert(`Вы покормили ${this.name} ${food.name}`);
       this.addLog(`Вы покормили ${this.name} ${food.name}`);
       this.checkIsAlive();
@@ -87,7 +86,6 @@ export class Pet {
       setTimeout(() => {
         this.lastPlayCount = Math.max(0, this.lastPlayCount - 1);
       }, 60000);
-      audioEffects.play.play();
       alert(`Вы поиграли с ${this.name} и заработали 5 монет`);
       this.addLog(`Вы поиграли с ${this.name}`);
       this.checkIsAlive();
@@ -106,8 +104,6 @@ export class Pet {
       this.coins -= heal.cost;
       this.health = Math.min(100, this.health + heal.health);
       if (heal.energy) this.energy = Math.min(100, this.energy + heal.energy);
-      audioEffects.heal.volume = 0.4;
-      audioEffects.heal.play();
       alert(`Вы вылечили ${this.name} ${type}`);
       this.addLog(`Вы вылечили ${this.name} ${type}`);
       this.checkIsAlive();
@@ -117,31 +113,37 @@ export class Pet {
   }
 
   event(offline = false) {
-    if (offline) {
+    try {
+      if (offline) {
+        const event = this.getRandomEvent();
+        if (event.happiness)
+          this.happiness = Math.min(100, this.happiness + event.happiness);
+        if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
+        if (event.health)
+          this.health = Math.min(100, this.health + event.health);
+        if (event.energy)
+          this.energy = Math.min(100, this.energy + event.energy);
+        this.addLog(event.desc);
+        this.checkIsAlive();
+        return;
+      }
+      if (this.hunger > 90 || this.energy < 10) {
+        alert("Питомец устал или голоден, отдохните или покормите его");
+        return;
+      }
       const event = this.getRandomEvent();
+      this.energy -= 10;
       if (event.happiness)
         this.happiness = Math.min(100, this.happiness + event.happiness);
       if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
       if (event.health) this.health = Math.min(100, this.health + event.health);
       if (event.energy) this.energy = Math.min(100, this.energy + event.energy);
+      alert(event.desc);
       this.addLog(event.desc);
       this.checkIsAlive();
-      return;
+    } catch (e) {
+      console.error("Ошибка при обработке события:", e);
     }
-    if (this.hunger > 90 || this.energy < 10) {
-      alert("Питомец устал или голоден, отдохните или покормите его");
-      return;
-    }
-    const event = this.getRandomEvent();
-    this.energy -= 10;
-    if (event.happiness)
-      this.happiness = Math.min(100, this.happiness + event.happiness);
-    if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
-    if (event.health) this.health = Math.min(100, this.health + event.health);
-    if (event.energy) this.energy = Math.min(100, this.energy + event.energy);
-    alert(event.desc);
-    this.addLog(event.desc);
-    this.checkIsAlive();
   }
 
   update() {
@@ -160,8 +162,12 @@ export class Pet {
       ? (this.health = Math.max(0, this.health - 0.12 * elapsed))
       : (this.health = Math.max(0, this.health - 0.05 * elapsed));
 
-    if (elapsed > 60) this.event(true);
-    if (elapsed > 1800) this.event(true);
+    if (elapsed > 60) {
+      const offlineEventsCount = Math.floor(elapsed / 60); // Trigger an event every minute
+      for (let i = 0; i < offlineEventsCount; i++) {
+        this.event(true);
+      }
+    }
 
     this.checkIsAlive();
   }
@@ -255,51 +261,3 @@ export const events = [
     energy: 20,
   }, // Положительное
 ];
-
-const audioEffects = {
-  feed: new Audio("../audio/feed.mp3"),
-  play: new Audio("../audio/play.mp3"),
-  heal: new Audio("../audio/heal.mp3"),
-  happy: new Audio("../audio/happy.mp3"),
-  hungry: new Audio("../audio/hungry.mp3"),
-  sad: new Audio("../audio/sad.mp3"),
-  sick: new Audio("../audio/sick.mp3"),
-  die: new Audio("../audio/die.mp3"),
-};
-
-export const petStates = {
-  die: {
-    src: "../petImg/die.jpg",
-    audio: audioEffects.die,
-    bgColor: "transparent",
-    classes: ["die"],
-  },
-  hungry: {
-    src: "../petImg/hungry1.jpg",
-    audio: audioEffects.hungry,
-    bgColor: "yellow",
-    classes: ["hungry"],
-    textColor: "black",
-  },
-  happy: {
-    src: "../petImg/happy1.jpg",
-    audio: audioEffects.happy,
-    bgColor: "green",
-    classes: ["happy"],
-    textColor: "white",
-  },
-  sad: {
-    src: "../petImg/sad1.jpg",
-    audio: audioEffects.sad,
-    bgColor: "blue",
-    classes: ["sad"],
-    textColor: "white",
-  },
-  sick: {
-    src: "../petImg/ill1.jpg",
-    audio: audioEffects.sick,
-    bgColor: "red",
-    classes: ["sick"],
-    textColor: "black",
-  },
-};
