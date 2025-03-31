@@ -36,7 +36,7 @@ body {
 /* Блок с питомцем */
 #myPet {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   padding: 20px;
@@ -154,7 +154,6 @@ progress[value]::-webkit-progress-value {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
   padding: 20px;
 }
 

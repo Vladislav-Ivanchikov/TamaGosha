@@ -113,10 +113,14 @@ const BD_INTERVAL = 10000;
 })();
 
 async function actionHandler(action, e) {
-  audioHandler(e);
-  action();
-  await saveData(userID, pet);
-  updatePet(pet);
+  try {
+    action();
+    audioHandler(e);
+    await saveData(userID, pet);
+    updatePet(pet);
+  } catch (e) {
+    console.log(e.message);
+  }
 }
 
 function audioHandler(e) {

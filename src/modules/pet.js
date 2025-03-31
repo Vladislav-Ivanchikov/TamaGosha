@@ -50,7 +50,7 @@ export class Pet {
   feed() {
     if (this.hunger < 15) {
       alert("Питомец не голоден");
-      return;
+      throw new Error("Питомец не голоден");
     }
     try {
       const food = foods[Math.floor(Math.random() * foods.length)];
@@ -68,12 +68,12 @@ export class Pet {
   play() {
     if (this.hunger > 90 || this.energy < 10 || this.happiness > 90) {
       alert(`${this.name} сейчас не до игр`);
-      return;
+      throw new Error("Питомец не готов к игре");
     }
     const energyCost = this.lastPlayCount > 2 ? 15 : 10;
     if (this.energy < energyCost) {
       alert("Недостаточно энергии");
-      return;
+      throw new Error("Недостаточно энергии");
     }
     try {
       this.lastPlayCount++;
@@ -113,37 +113,31 @@ export class Pet {
   }
 
   event(offline = false) {
-    try {
-      if (offline) {
-        const event = this.getRandomEvent();
-        if (event.happiness)
-          this.happiness = Math.min(100, this.happiness + event.happiness);
-        if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
-        if (event.health)
-          this.health = Math.min(100, this.health + event.health);
-        if (event.energy)
-          this.energy = Math.min(100, this.energy + event.energy);
-        this.addLog(event.desc);
-        this.checkIsAlive();
-        return;
-      }
-      if (this.hunger > 90 || this.energy < 10) {
-        alert("Питомец устал или голоден, отдохните или покормите его");
-        return;
-      }
+    if (offline) {
       const event = this.getRandomEvent();
-      this.energy -= 10;
       if (event.happiness)
         this.happiness = Math.min(100, this.happiness + event.happiness);
       if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
       if (event.health) this.health = Math.min(100, this.health + event.health);
       if (event.energy) this.energy = Math.min(100, this.energy + event.energy);
-      alert(event.desc);
       this.addLog(event.desc);
       this.checkIsAlive();
-    } catch (e) {
-      console.error("Ошибка при обработке события:", e);
+      return;
     }
+    if (this.hunger > 90 || this.energy < 10) {
+      alert("Питомец устал или голоден, отдохните или покормите его");
+      throw new Error("Питомец устал или голоден");
+    }
+    const event = this.getRandomEvent();
+    this.energy -= 10;
+    if (event.happiness)
+      this.happiness = Math.min(100, this.happiness + event.happiness);
+    if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
+    if (event.health) this.health = Math.min(100, this.health + event.health);
+    if (event.energy) this.energy = Math.min(100, this.energy + event.energy);
+    alert(event.desc);
+    this.addLog(event.desc);
+    this.checkIsAlive();
   }
 
   update() {
