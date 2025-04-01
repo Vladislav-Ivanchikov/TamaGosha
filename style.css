@@ -27,7 +27,7 @@ body {
 
 #app {
   display: grid;
-  grid-template-rows: 2fr 2fr 1fr;
+  grid-template-rows: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1fr);
   width: 100%;
   height: 100vh;
   height: -webkit-fill-available;
@@ -42,13 +42,14 @@ body {
 #myPet,
 #petStatus,
 #buttons {
-  padding: 10px;
+  padding: 2vw;
   min-height: 0;
+  overflow: hidden;
 }
 
 #myPet {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   flex-direction: column;
   position: relative;
@@ -106,10 +107,10 @@ body {
 }
 
 #petName {
-  font-size: 32px;
+  font-size: clamp(24px, 6vw, 32px);
   font-weight: bold;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 2vw;
 }
 
 #petImage {
@@ -120,7 +121,7 @@ body {
   border-radius: 50%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   animation: breathe 2s infinite alternate;
-  margin-top: 10px;
+  object-fit: contain;
 }
 
 @keyframes breathe {
@@ -135,11 +136,18 @@ body {
 #petStatus {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+}
+
+#petStatus p {
+  margin: 1vw 0;
+  font-size: clamp(14px, 3vw, 18px);
 }
 
 progress {
   width: 90%;
-  height: 20px;
+  height: 5vw;
+  max-height: 20px;
   border-radius: 10px;
   overflow: hidden;
   -webkit-appearance: none;
@@ -169,9 +177,9 @@ progress[value]::-moz-progress-bar {
 }
 
 button {
-  margin: 10px;
-  padding: 15px 30px;
-  font-size: 18px;
+  margin: 2vw;
+  padding: clamp(8px, 3vw, 15px) clamp(16px, 6vw, 30px);
+  font-size: clamp(14px, 4vw, 18px);
   font-weight: bold;
   color: #fff;
   background-color: #4caf50;
@@ -233,16 +241,18 @@ button:disabled {
 
 #logBtn {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-  padding: 10px;
-  font-size: 16px;
+  bottom: 2vw;
+  right: 2vw;
+  padding: 0;
+  font-size: clamp(12px, 4vw, 16px);
   color: #fff;
   background-color: #ff9800;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 10vw;
+  height: 10vw;
+  max-width: 40px;
+  max-height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -296,20 +306,27 @@ button:disabled {
   text-decoration: none;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 375px) {
+  #app {
+    grid-template-rows: minmax(0, 2fr) minmax(0, 1.5fr) minmax(0, 1fr);
+  }
   #petImage {
     width: 45vw;
     height: 45vw;
   }
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
 }
 
-@media (max-width: 400px) {
+@media (min-width: 390px) and (max-height: 852px) {
   #petImage {
     width: 40vw;
     height: 40vw;
   }
   button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 16px;
   }
 }
