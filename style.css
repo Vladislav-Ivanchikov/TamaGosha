@@ -42,14 +42,14 @@ body {
 #myPet,
 #petStatus,
 #buttons {
-  padding: 2vw;
+  padding: 3vw;
   min-height: 0;
   overflow: hidden;
 }
 
 #myPet {
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   flex-direction: column;
   position: relative;
@@ -140,14 +140,14 @@ body {
 }
 
 #petStatus p {
-  margin: 1vw 0;
-  font-size: clamp(14px, 3vw, 18px);
+  margin: 1.2vw 0;
+  font-size: clamp(14px, 2vw, 18px);
 }
 
 progress {
-  width: 90%;
-  height: 5vw;
-  max-height: 20px;
+  width: 100%;
+  height: 6vw;
+  max-height: 22px;
   border-radius: 10px;
   overflow: hidden;
   -webkit-appearance: none;
@@ -177,7 +177,7 @@ progress[value]::-moz-progress-bar {
 }
 
 button {
-  margin: 2vw;
+  margin: 1vw;
   padding: clamp(8px, 3vw, 15px) clamp(16px, 6vw, 30px);
   font-size: clamp(14px, 4vw, 18px);
   font-weight: bold;
@@ -325,8 +325,17 @@ button:disabled {
     width: 40vw;
     height: 40vw;
   }
+  #petStatus p {
+    margin: 2vw 0;
+  }
   button {
     padding: 12px 24px;
     font-size: 16px;
+  }
+
+  #myPet,
+  #petStatus,
+  #buttons {
+    padding: 7vw;
   }
 }

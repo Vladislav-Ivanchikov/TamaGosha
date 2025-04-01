@@ -157,7 +157,7 @@ export class Pet {
       : (this.health = Math.max(0, this.health - 0.05 * elapsed));
 
     if (elapsed >= 600) {
-      const offlineEventsCount = Math.floor(elapsed / 600); // Trigger an event every minute
+      const offlineEventsCount = Math.floor(elapsed / 600); // Trigger an event every 10 minute
       for (let i = 0; i < offlineEventsCount; i++) {
         this.event(true);
       }
