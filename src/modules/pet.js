@@ -112,18 +112,7 @@ export class Pet {
     }
   }
 
-  event(offline = false) {
-    if (offline) {
-      const event = this.getRandomEvent();
-      if (event.happiness)
-        this.happiness = Math.min(100, this.happiness + event.happiness);
-      if (event.coins) this.coins = Math.max(0, this.coins + event.coins);
-      if (event.health) this.health = Math.min(100, this.health + event.health);
-      if (event.energy) this.energy = Math.min(100, this.energy + event.energy);
-      this.addLog(event.desc);
-      this.checkIsAlive();
-      return;
-    }
+  event() {
     if (this.hunger > 90 || this.energy < 10) {
       alert("Питомец устал или голоден, отдохните или покормите его");
       throw new Error("Питомец устал или голоден");
@@ -156,10 +145,10 @@ export class Pet {
       ? (this.health = Math.max(0, this.health - 0.12 * elapsed))
       : (this.health = Math.max(0, this.health - 0.05 * elapsed));
 
-    if (elapsed >= 600) {
-      const offlineEventsCount = Math.floor(elapsed / 600); // Trigger an event every 10 minute
+    if (elapsed >= 60) {
+      const offlineEventsCount = Math.floor(elapsed / 60); // Trigger an event every minute
       for (let i = 0; i < offlineEventsCount; i++) {
-        this.event(true);
+        this.event();
       }
     }
 
