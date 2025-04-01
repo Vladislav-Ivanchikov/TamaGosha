@@ -1,52 +1,63 @@
-/* Импорт шрифта из Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap");
 
 * {
   box-sizing: border-box;
 }
 
-/* Основные стили для страницы */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
   font-family: "Comic Neue", cursive;
   text-align: center;
-  background: linear-gradient(
-    to bottom,
-    #a8e6cf,
-    #dcedc1
-  ); /* Мягкий градиент */
-  margin: 0;
-  padding: 0;
+  background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  height: -webkit-fill-available;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-/* Контейнер приложения */
 #app {
   display: grid;
-  grid-template-rows: 2fr 2fr 1fr; /* Разделение на 3 части */
+  grid-template-rows: 2fr 2fr 1fr;
+  width: 100%;
+  height: 100vh;
+  height: -webkit-fill-available;
+  max-width: 600px;
   margin: 0 auto;
-  max-width: 400px;
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Тень */
-  /* overflow: hidden; */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
-/* Блок с питомцем */
+#myPet,
+#petStatus,
+#buttons {
+  padding: 10px;
+  min-height: 0;
+}
+
 #myPet {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  padding: 20px;
   position: relative;
 }
 
 #myPet.hungry {
-  animation: hungry 2s infinite alternate; /* Анимация голода */
-  background-color: #e6e930; /* желтый цвет для голода */
-  transition: background-color 2s; /* Плавное изменение цвета */
+  animation: hungry 2s infinite alternate;
+  background-color: #e6e930;
+  transition: background-color 2s;
 }
 
 @keyframes hungry {
@@ -54,17 +65,17 @@ body {
     background-color: #e6e930;
   }
   50% {
-    background-color: #f3b632; /* Оранжевый цвет для голода */
+    background-color: #f3b632;
   }
   100% {
-    background-color: #f3b632; /* Красный цвет для голода */
+    background-color: #f3b632;
   }
 }
 
 #myPet.happy {
-  animation: happy 2s infinite alternate; /* Анимация счастья */
-  background-color: #4caf50; /* Зеленый цвет для счастья */
-  transition: background-color 2s; /* Плавное изменение цвета */
+  animation: happy 2s infinite alternate;
+  background-color: #4caf50;
+  transition: background-color 2s;
 }
 
 @keyframes happy {
@@ -72,17 +83,17 @@ body {
     background-color: #4ed152;
   }
   50% {
-    background-color: #2ef35f; /* Желтый цвет для счастья */
+    background-color: #2ef35f;
   }
   100% {
-    background-color: #11e646; /* Желтый цвет для счастья */
+    background-color: #11e646;
   }
 }
 
 #myPet.sick {
-  animation: sick 0.5s infinite alternate; /* Анимация болезни */
-  background-color: #e91e63; /* Розовый цвет для болезни */
-  transition: background-color 2s; /* Плавное изменение цвета */
+  animation: sick 0.5s infinite alternate;
+  background-color: #e91e63;
+  transition: background-color 2s;
 }
 
 @keyframes sick {
@@ -90,7 +101,7 @@ body {
     background-color: #f0071b;
   }
   100% {
-    background-color: #c20d0d; /* Красный цвет для болезни */
+    background-color: #c20d0d;
   }
 }
 
@@ -102,14 +113,16 @@ body {
 }
 
 #petImage {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%; /* Круглое изображение */
+  width: 50vw;
+  height: 50vw;
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 50%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  animation: breathe 2s infinite alternate; /* Анимация дыхания */
+  animation: breathe 2s infinite alternate;
+  margin-top: 10px;
 }
 
-/* Анимация для изображения питомца */
 @keyframes breathe {
   0% {
     transform: scale(1);
@@ -119,11 +132,9 @@ body {
   }
 }
 
-/* Панель состояния */
 #petStatus {
   display: flex;
   flex-direction: column;
-  padding: 20px;
 }
 
 progress {
@@ -131,12 +142,8 @@ progress {
   height: 20px;
   border-radius: 10px;
   overflow: hidden;
-}
-
-progress[value] {
   -webkit-appearance: none;
   appearance: none;
-  transition: value 0.5s ease-out; /* Плавное изменение значения */
 }
 
 progress[value]::-webkit-progress-bar {
@@ -145,16 +152,20 @@ progress[value]::-webkit-progress-bar {
 }
 
 progress[value]::-webkit-progress-value {
-  background-color: #4caf50; /* Зеленый цвет для полоски */
+  background-color: #4caf50;
+  border-radius: 10px;
+  transition: width 0.5s ease-out;
+}
+
+progress[value]::-moz-progress-bar {
+  background-color: #4caf50;
   border-radius: 10px;
 }
 
-/* Блок с кнопками */
 #buttons {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
 }
 
 button {
@@ -163,17 +174,17 @@ button {
   font-size: 18px;
   font-weight: bold;
   color: #fff;
-  background-color: #4caf50; /* Зеленый цвет кнопок */
+  background-color: #4caf50;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s, transform 0.3s; /* Плавные эффекты */
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
-  background-color: #45a049; /* Темнее при наведении */
-  transform: translateY(-2px); /* Легкий подъем */
+  background-color: #45a049;
+  transform: translateY(-2px);
 }
 
 button:active {
@@ -185,11 +196,11 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Иконки для кнопок */
-
-#feedBtn.warning {
-  border: 2px solid #ff9800; /* Оранжевая рамка для кнопки */
-  animation: border-warning 2s infinite alternate; /* Анимация рамки */
+#feedBtn.warning,
+#playBtn.warning,
+#healBtn.warning {
+  border: 2px solid #ff9800;
+  animation: border-warning 2s infinite alternate;
 }
 
 @keyframes border-warning {
@@ -198,7 +209,7 @@ button:disabled {
     background-color: #4caf50;
   }
   100% {
-    border-color: #f44336; /* Красная рамка для кнопки */
+    border-color: #f44336;
     background-color: #f4b836;
   }
 }
@@ -207,34 +218,21 @@ button:disabled {
   content: "🍔";
   margin-right: 5px;
 }
-
 #playBtn::before {
   content: "🎮";
   margin-right: 5px;
 }
-
-#playBtn.warning {
-  border: 2px solid #ff9800;
-  animation: border-warning 2s infinite alternate;
-}
-
 #healBtn::before {
   content: "💊";
   margin-right: 5px;
 }
-
-#healBtn.warning {
-  border: 2px solid #ff9800;
-  animation: border-warning 2s infinite alternate;
-}
-
 #eventBtn::before {
   content: "🎲";
   margin-right: 5px;
 }
 
 #logBtn {
-  position: absolute; /* Абсолютное позиционирование относительно #myPet */
+  position: absolute;
   bottom: 10px;
   right: 10px;
   padding: 10px;
@@ -298,29 +296,18 @@ button:disabled {
   text-decoration: none;
 }
 
-/* Адаптивность для мобильных устройств */
-
 @media (max-width: 600px) {
-  #app {
-    max-width: 100%;
-  }
   #petImage {
-    width: 180px;
-    height: 180px;
+    width: 45vw;
+    height: 45vw;
   }
 }
 
 @media (max-width: 400px) {
-  #app {
-    max-width: 100%;
-    height: 100vh;
-  }
-
   #petImage {
-    width: 150px;
-    height: 150px;
+    width: 40vw;
+    height: 40vw;
   }
-
   button {
     padding: 10px 20px;
     font-size: 16px;
